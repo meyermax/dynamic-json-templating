@@ -1,0 +1,62 @@
+{
+  "job": {
+    "services": [
+      {
+        "name": "ZK",
+        "url": "http://localhost:8000/country",
+        "method": "POST",
+        "data": {
+          "start": "%%yesterday%%",
+          "end": "%%today%%",
+          "currency": "840"
+        }
+      },
+      {
+        "name": "ZK2",
+        "url": "http://localhost:8000/country",
+        "method": "POST",
+        "data": {
+          "start": "%%yesterday%%",
+          "end": "%%today%%",
+          "currency": "840"
+        }
+      }
+    ],
+    "result": {
+      "db": {
+        "schema": "zk",
+        "table": "complex",
+        "columns": {
+          "panelid": "1",
+          "timestamp": {
+            "@type": "function",
+            "function": "sum",
+            "args": [
+              1,
+              2
+            ]
+          },
+          "data": {
+            "@type": "array",
+            "context": {
+              "@type": "results",
+              "service": "ZK",
+              "path": "daily"
+            },
+            "items": {
+              "id": "1",
+              "@country": "country",
+              "@value": "value"
+            }
+          }
+        }
+      }
+    },
+    "schedule": {
+      "cron": "* * * * *"
+    }
+  }
+}
+
+
+
