@@ -62,7 +62,7 @@ let json = JSON.parse(json_file);
 
 
 //parse json with bfs
-function parse(json, callback) {
+async function parse(json, callback) {
     let processed = {};
     if (typeof json === 'object') {
         for (let key in json) {
@@ -106,7 +106,18 @@ function parseArray(obj){
 }
 
 
-json = parse(json, (obj) => {
+json = parse(json, async (obj) => {
+
+    //await all promises in object
+    for (const objKey in obj) {
+        if(Array.isArray(obj[objKey])){
+            obj[objKey] = await Promise.all(obj[objKey]);
+        }
+        else {
+            obj[objKey] = await obj[objKey];
+        }
+    }
+
     if (obj.hasOwnProperty('@type')) {
         switch (obj['@type']) {
             case 'function':
@@ -132,4 +143,8 @@ json = parse(json, (obj) => {
 
 console.timeEnd("parse");
 
-console.log(JSON.stringify(json));
+json.then((res) => {
+    console.log(JSON.stringify(res));
+});
+
+
